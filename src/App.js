@@ -116,8 +116,6 @@ function DroppableSlot({ id, current, showCorrect }) {
   return (
     <div
       ref={setNodeRef}
-      // Duplicate block removed due to build error
-      return (
     <div
       ref={setNodeRef}
       className={`h-12 border border-gray-300 bg-white px-3 py-2 text-sm text-center whitespace-nowrap overflow-hidden rounded ${
