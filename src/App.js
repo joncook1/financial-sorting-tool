@@ -10,15 +10,25 @@ const statements = {
     { label: "Net Profit", correct: "Net Profit" },
   ],
   "Statement of Financial Position": [
+    { label: "Property, plant and equipment", correct: "Property, plant and equipment" },
+    { label: "Accumulated Depreciation", correct: "Accumulated Depreciation" },
     { label: "Non-current Assets", correct: "Non-current Assets" },
+    { label: "Cash", correct: "Cash" },
+    { label: "Debtors", correct: "Debtors" },
+    { label: "Stock/Inventory", correct: "Stock/Inventory" },
     { label: "Current Assets", correct: "Current Assets" },
     { label: "Total Assets", correct: "Total Assets" },
+    { label: "Bank Overdraft", correct: "Bank Overdraft" },
+    { label: "Trade Creditors", correct: "Trade Creditors" },
+    { label: "Other Short-Term Loans", correct: "Other Short-Term Loans" },
     { label: "Current Liabilities", correct: "Current Liabilities" },
+    { label: "Borrowings-Long Term Loans", correct: "Borrowings-Long Term Loans" },
     { label: "Long-term Liabilities", correct: "Long-term Liabilities" },
+    { label: "Total Liabilities", correct: "Total Liabilities" },
     { label: "Net Assets", correct: "Net Assets" },
-    { label: "Equity", correct: "Equity" },
     { label: "Share Capital", correct: "Share Capital" },
-    { label: "Retained Profit", correct: "Retained Profit" },
+    { label: "Retained Earnings", correct: "Retained Earnings" },
+    { label: "Equity", correct: "Equity" },
   ],
   "Cash Flow Forecast": [
     { label: "Opening Balance", correct: "Opening Balance" },
@@ -31,10 +41,35 @@ const statements = {
 
 const subsections = {
   "Statement of Financial Position": {
-    "Assets": ["Non-current Assets", "Current Assets", "Total Assets"],
-    "Liabilities": ["Current Liabilities", "Long-term Liabilities"],
-    "Equity": ["Share Capital", "Retained Profit", "Equity"],
-    "Summary": ["Net Assets"]
+    "Non-current Assets": [
+      "Property, plant and equipment",
+      "Accumulated Depreciation",
+      "Non-current Assets"
+    ],
+    "Current Assets": [
+      "Cash",
+      "Debtors",
+      "Stock/Inventory",
+      "Current Assets"
+    ],
+    "Assets Summary": ["Total Assets"],
+    "Current Liabilities": [
+      "Bank Overdraft",
+      "Trade Creditors",
+      "Other Short-Term Loans",
+      "Current Liabilities"
+    ],
+    "Non-current Liabilities": [
+      "Borrowings-Long Term Loans",
+      "Long-term Liabilities"
+    ],
+    "Liabilities Summary": ["Total Liabilities"],
+    "Net Assets": ["Net Assets"],
+    "Equity": [
+      "Share Capital",
+      "Retained Earnings",
+      "Equity"
+    ]
   },
   "Statement of Profit or Loss": {
     "": ["Sales Revenue", "Cost of Goods Sold", "Gross Profit", "Operating Expenses", "Net Profit"]
