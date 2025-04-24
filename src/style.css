@@ -1,0 +1,70 @@
+
+.container {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  padding: 1rem;
+  flex-wrap: wrap;
+}
+
+.draggable-container {
+  flex: 1;
+  min-width: 200px;
+}
+
+.draggable {
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: grab;
+}
+
+.zones {
+  display: flex;
+  gap: 1rem;
+  flex: 2;
+  flex-wrap: wrap;
+}
+
+.dropzone {
+  flex: 1;
+  min-width: 200px;
+  min-height: 120px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 0.5rem;
+  background-color: #f9f9f9;
+}
+
+.dropzone-over {
+  background-color: #d2fbd4;
+  border-color: #5cb85c;
+}
+
+.dropped-item {
+  background-color: #e3f2fd;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+.check-answer {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
