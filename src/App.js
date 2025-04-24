@@ -2,9 +2,41 @@ import { useState } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 
 const statements = {
-  "Statement of Profit or Loss": [...],
-  "Statement of Financial Position": [...],
-  "Cash Flow Forecast": [...],
+  "Statement of Profit or Loss": [
+    { label: "Sales Revenue", correct: "Sales Revenue" },
+    { label: "Cost of Goods Sold", correct: "Cost of Goods Sold" },
+    { label: "Gross Profit", correct: "Gross Profit" },
+    { label: "Operating Expenses", correct: "Operating Expenses" },
+    { label: "Net Profit", correct: "Net Profit" },
+  ],
+  "Statement of Financial Position": [
+    { label: "Property, plant and equipment", correct: "Property, plant and equipment" },
+    { label: "Accumulated Depreciation", correct: "Accumulated Depreciation" },
+    { label: "Non-current Assets", correct: "Non-current Assets" },
+    { label: "Cash", correct: "Cash" },
+    { label: "Debtors", correct: "Debtors" },
+    { label: "Stock/Inventory", correct: "Stock/Inventory" },
+    { label: "Current Assets", correct: "Current Assets" },
+    { label: "Total Assets", correct: "Total Assets" },
+    { label: "Bank Overdraft", correct: "Bank Overdraft" },
+    { label: "Trade Creditors", correct: "Trade Creditors" },
+    { label: "Other Short-Term Loans", correct: "Other Short-Term Loans" },
+    { label: "Current Liabilities", correct: "Current Liabilities" },
+    { label: "Borrowings-Long Term Loans", correct: "Borrowings-Long Term Loans" },
+    { label: "Long-term Liabilities", correct: "Long-term Liabilities" },
+    { label: "Total Liabilities", correct: "Total Liabilities" },
+    { label: "Net Assets", correct: "Net Assets" },
+    { label: "Share Capital", correct: "Share Capital" },
+    { label: "Retained Earnings", correct: "Retained Earnings" },
+    { label: "Equity", correct: "Equity" },
+  ],
+  "Cash Flow Forecast": [
+    { label: "Opening Balance", correct: "Opening Balance" },
+    { label: "Cash Inflows", correct: "Cash Inflows" },
+    { label: "Cash Outflows", correct: "Cash Outflows" },
+    { label: "Net Cash Flow", correct: "Net Cash Flow" },
+    { label: "Closing Balance", correct: "Closing Balance" },
+  ]
 };
 
 const subsections = {
