@@ -1,125 +1,160 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
-import "./style.css";
 
-const allAccounts = [
-  { name: "Cash", category: "Balance Sheet" },
-  { name: "Accounts Receivable", category: "Balance Sheet" },
-  { name: "Inventory", category: "Balance Sheet" },
-  { name: "Sales Revenue", category: "Income Statement" },
-  { name: "Cost of Goods Sold", category: "Income Statement" },
-  { name: "Utilities Expense", category: "Income Statement" },
-  { name: "Net Profit", category: "Profit and Loss Statement" },
-  { name: "Gross Profit", category: "Profit and Loss Statement" },
-  { name: "Operating Expense", category: "Profit and Loss Statement" },
-];
+const statements = {
+  "Statement of Profit or Loss": [
+    { label: "Sales Revenue", correct: "Sales Revenue" },
+    { label: "Cost of Goods Sold", correct: "Cost of Goods Sold" },
+    { label: "Gross Profit", correct: "Gross Profit" },
+    { label: "Operating Expenses", correct: "Operating Expenses" },
+    { label: "Net Profit", correct: "Net Profit" },
+  ],
+  "Statement of Financial Position": [
+    { label: "Non-current Assets", correct: "Non-current Assets" },
+    { label: "Current Assets", correct: "Current Assets" },
+    { label: "Total Assets", correct: "Total Assets" },
+    { label: "Current Liabilities", correct: "Current Liabilities" },
+    { label: "Long-term Liabilities", correct: "Long-term Liabilities" },
+    { label: "Net Assets", correct: "Net Assets" },
+    { label: "Equity", correct: "Equity" },
+    { label: "Share Capital", correct: "Share Capital" },
+    { label: "Retained Profit", correct: "Retained Profit" },
+  ],
+  "Cash Flow Forecast": [
+    { label: "Opening Balance", correct: "Opening Balance" },
+    { label: "Cash Inflows", correct: "Cash Inflows" },
+    { label: "Cash Outflows", correct: "Cash Outflows" },
+    { label: "Net Cash Flow", correct: "Net Cash Flow" },
+    { label: "Closing Balance", correct: "Closing Balance" },
+  ],
+};
 
-const categories = ["Balance Sheet", "Income Statement", "Profit and Loss Statement"];
+const subsections = {
+  "Statement of Financial Position": {
+    "Assets": ["Non-current Assets", "Current Assets", "Total Assets"],
+    "Liabilities": ["Current Liabilities", "Long-term Liabilities"],
+    "Equity": ["Share Capital", "Retained Profit", "Equity"]
+  },
+  "Statement of Profit or Loss": {
+    "Income": ["Sales Revenue"],
+    "Expenses": ["Cost of Goods Sold", "Operating Expenses"],
+    "Results": ["Gross Profit", "Net Profit"]
+  },
+  "Cash Flow Forecast": {
+    "Sections": ["Opening Balance", "Cash Inflows", "Cash Outflows", "Net Cash Flow", "Closing Balance"]
+  }
+};
 
 function DraggableItem({ id, children }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
-  const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)` } : undefined;
-
+  const style = transform ? {
+    transform: `translate(${transform.x}px, ${transform.y}px)`
+  } : undefined;
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes} className="draggable">
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes} className="p-2 bg-white shadow border rounded mb-2 cursor-move">
       {children}
     </div>
   );
 }
 
-function DroppableZone({ id, children }) {
+function DroppableSlot({ id, label, current, onDrop, showCorrect }) {
   const { isOver, setNodeRef } = useDroppable({ id });
+  const isCorrect = current === id;
   return (
-    <div ref={setNodeRef} className={`dropzone ${isOver ? "dropzone-over" : ""}`}>
-      <h3>{id}</h3>
-      {children}
+    <div ref={setNodeRef} className={`border p-2 rounded mb-2 min-h-[3rem] ${isOver ? 'bg-blue-100' : 'bg-gray-100'}`}>
+      <div className="font-semibold mb-1">{label}</div>
+      <div className="min-h-[1.5rem]">
+        {current && <div>{current}</div>}
+        {showCorrect && !isCorrect && current && <div className="text-sm text-red-600">Correct: {id}</div>}
+        {showCorrect && isCorrect && current && <div className="text-sm text-green-600">✅ Correct</div>}
+      </div>
     </div>
   );
 }
 
 export default function App() {
-  const [items, setItems] = useState([]);
-  const [droppedItems, setDroppedItems] = useState({});
-  const [score, setScore] = useState(null);
+  const [mode, setMode] = useState("Statement of Profit or Loss");
+  const [placements, setPlacements] = useState({});
+  const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => {
-    const randomized = shuffle([...allAccounts]).slice(0, 6);
-    setItems(randomized);
-    setDroppedItems({});
-    setScore(null);
-  }, []);
+  const currentStatement = statements[mode];
+  const modeSubsections = subsections[mode];
+  const draggableItems = currentStatement.map((i) => i.correct).sort(() => Math.random() - 0.5);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (over && categories.includes(over.id)) {
-      setDroppedItems((prev) => ({
-        ...prev,
-        [active.id]: over.id,
-      }));
+    if (over && active) {
+      setPlacements({ ...placements, [over.id]: active.id });
     }
   };
 
-  const handleCheckAnswers = () => {
-    let correct = 0;
-    items.forEach((item) => {
-      if (droppedItems[item.name] === item.category) correct++;
-    });
-    setScore(`${correct} out of ${items.length} correct`);
-    localStorage.setItem("financialScore", `${correct}/${items.length}`);
-  };
-
   const handleReset = () => {
-    const randomized = shuffle([...allAccounts]).slice(0, 6);
-    setItems(randomized);
-    setDroppedItems({});
-    setScore(null);
+    setPlacements({});
+    setSubmitted(false);
   };
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="container">
-        <div className="draggable-container">
-          <h2>Drag these accounts:</h2>
-          {items.map(
-            (item) =>
-              !droppedItems[item.name] && (
-                <DraggableItem key={item.name} id={item.name}>
-                  {item.name}
-                </DraggableItem>
-              )
-          )}
-        </div>
+      <div className="p-4 max-w-4xl mx-auto">
+        <h1 className="text-2xl font-bold mb-4">IB Financial Statement Trainer</h1>
 
-        <div className="zones">
-          {categories.map((cat) => (
-            <DroppableZone key={cat} id={cat}>
-              {Object.entries(droppedItems)
-                .filter(([_, zone]) => zone === cat)
-                .map(([name]) => (
-                  <div key={name} className="dropped-item">
-                    {name}
-                  </div>
-                ))}
-            </DroppableZone>
+        <label className="mb-2 block font-semibold">Select Statement:</label>
+        <select
+          className="p-2 border rounded mb-6"
+          value={mode}
+          onChange={(e) => {
+            setMode(e.target.value);
+            handleReset();
+          }}
+        >
+          {Object.keys(statements).map((key) => (
+            <option key={key}>{key}</option>
           ))}
-        </div>
-      </div>
+        </select>
 
-      <div className="check-answer">
-        <button onClick={handleCheckAnswers}>Check Answers</button>
-        <button onClick={handleReset} style={{ marginLeft: "1rem" }}>Reset</button>
-        {score && <p>{score}</p>}
+        <div className="grid grid-cols-2 gap-8">
+          <div>
+            <h2 className="text-lg font-semibold mb-2">Draggable Accounts</h2>
+            {draggableItems.map((item) => (
+              <DraggableItem key={item} id={item}>{item}</DraggableItem>
+            ))}
+          </div>
+
+          <div>
+            {modeSubsections &&
+              Object.entries(modeSubsections).map(([sectionTitle, sectionItems]) => (
+                <div key={sectionTitle} className="border border-gray-300 rounded p-3 mb-4">
+                  <h2 className="text-lg font-semibold mb-2">{sectionTitle}</h2>
+                  {sectionItems.map((itemLabel) => (
+                    <DroppableSlot
+                      key={itemLabel}
+                      id={itemLabel}
+                      label={itemLabel}
+                      current={placements[itemLabel]}
+                      onDrop={handleDragEnd}
+                      showCorrect={submitted}
+                    />
+                  ))}
+                </div>
+              ))}
+          </div>
+        </div>
+
+        <div className="mt-6 space-x-4">
+          <button
+            onClick={() => setSubmitted(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Check Answers
+          </button>
+          <button
+            onClick={handleReset}
+            className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+          >
+            Reset
+          </button>
+        </div>
       </div>
     </DndContext>
   );
-}
-
-function shuffle(array) {
-  let currentIndex = array.length, randomIndex;
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-  }
-  return array;
 }
