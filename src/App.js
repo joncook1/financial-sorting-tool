@@ -40,7 +40,55 @@ const statements = {
 };
 
 const subsections = {
-  ... // unchanged
+  "Statement of Profit or Loss": {
+    "": [
+      "Sales Revenue",
+      "Cost of Goods Sold",
+      "Gross Profit",
+      "Operating Expenses",
+      "Net Profit"
+    ]
+  },
+  "Statement of Financial Position": {
+    "Non-current Assets": [
+      "Property, plant and equipment",
+      "Accumulated Depreciation",
+      "Non-current Assets"
+    ],
+    "Current Assets": [
+      "Cash",
+      "Debtors",
+      "Stock/Inventory",
+      "Current Assets"
+    ],
+    "Assets Summary": ["Total Assets"],
+    "Current Liabilities": [
+      "Bank Overdraft",
+      "Trade Creditors",
+      "Other Short-Term Loans",
+      "Current Liabilities"
+    ],
+    "Non-current Liabilities": [
+      "Borrowings-Long Term Loans",
+      "Long-term Liabilities"
+    ],
+    "Liabilities Summary": ["Total Liabilities"],
+    "Net Assets": ["Net Assets"],
+    "Equity": [
+      "Share Capital",
+      "Retained Earnings",
+      "Equity"
+    ]
+  },
+  "Cash Flow Forecast": {
+    "": [
+      "Opening Balance",
+      "Cash Inflows",
+      "Cash Outflows",
+      "Net Cash Flow",
+      "Closing Balance"
+    ]
+  }
 };
 
 function DraggableItem({ id, children, hidden }) {
