@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
-import { motion, AnimatePresence } from "framer-motion";
 
 const statements = {
   "Statement of Profit or Loss": [
@@ -49,17 +48,15 @@ function DraggableItem({ id, children }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
   const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)` } : undefined;
   return (
-    <motion.div
+    <div
       ref={setNodeRef}
       style={style}
       {...listeners}
       {...attributes}
       className="p-3 bg-white shadow-md border rounded-lg mb-3 cursor-grab hover:shadow-lg transition text-center"
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -67,45 +64,24 @@ function DroppableSlot({ id, current, showCorrect }) {
   const { isOver, setNodeRef } = useDroppable({ id });
   const isCorrect = current === id;
   return (
-    <motion.div
+    <div
       ref={setNodeRef}
       className={`rounded-lg p-3 h-20 flex flex-col justify-center items-center mb-3 transition border-2 text-center font-medium text-gray-800 ${
         isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'
       }`}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
     >
       {current ? (
-        <motion.div layout>{current}</motion.div>
+        <div>{current}</div>
       ) : (
         <div className="text-sm text-gray-400 italic">Drop an account here</div>
       )}
-      {showCorrect && (
-        <AnimatePresence>
-          {!isCorrect && current && (
-            <motion.div
-              className="text-sm text-red-600 mt-1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              Correct: {id}
-            </motion.div>
-          )}
-          {isCorrect && current && (
-            <motion.div
-              className="text-sm text-green-600 mt-1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              ✅ Correct
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {showCorrect && !isCorrect && current && (
+        <div className="text-sm text-red-600 mt-1">Correct: {id}</div>
       )}
-    </motion.div>
+      {showCorrect && isCorrect && current && (
+        <div className="text-sm text-green-600 mt-1">✅ Correct</div>
+      )}
+    </div>
   );
 }
 
