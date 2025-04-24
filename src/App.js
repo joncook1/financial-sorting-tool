@@ -116,42 +116,8 @@ function DroppableSlot({ id, current, showCorrect }) {
   return (
     <div
       ref={setNodeRef}
-      className={`h-12 px-3 py-2 text-sm text-center rounded border ${highlight} flex items-center justify-center`}
-    >
-      {current ? (
-        <div>
-          <div>{current}</div>
-          {showCorrect && (
-            <div className={`text-xs mt-1 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-              {isCorrect ? '✅ Correct' : `Correct: ${id}`}
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="text-gray-300 italic">&nbsp;</div>
-      )}
-    </div>
-  );
-}
-      className={`h-12 px-3 py-2 text-sm text-center rounded border ${highlight} flex items-center justify-center`}
-    >
-      {current ? (
-        <div>
-          <div>{current}</div>
-          {showCorrect && (
-            <div className={`text-xs mt-1 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-              {isCorrect ? '✅ Correct' : `Correct: ${id}`}
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="text-gray-300 italic">&nbsp;</div>
-      )}
-    </div>
-  );
-} = useDroppable({ id });
-  const isCorrect = current === id;
-  return (
+      // Duplicate block removed due to build error
+      return (
     <div
       ref={setNodeRef}
       className={`h-12 border border-gray-300 bg-white px-3 py-2 text-sm text-center whitespace-nowrap overflow-hidden rounded ${
