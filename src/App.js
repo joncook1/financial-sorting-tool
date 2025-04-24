@@ -65,7 +65,7 @@ export default function App() {
     items.forEach((item) => {
       if (droppedItems[item.name] === item.category) correct++;
     });
-    setScore(\`\${correct} out of \${items.length} correct\`);
+    setScore(`${correct} out of ${items.length} correct`);
     localStorage.setItem("financialScore", \`\${correct}/\${items.length}\`);
   };
 
