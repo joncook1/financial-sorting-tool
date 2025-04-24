@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import "./style.css";
@@ -66,7 +65,7 @@ export default function App() {
       if (droppedItems[item.name] === item.category) correct++;
     });
     setScore(`${correct} out of ${items.length} correct`);
-    localStorage.setItem("financialScore", \`\${correct}/\${items.length}\`);
+    localStorage.setItem("financialScore", `${correct}/${items.length}`);
   };
 
   const handleReset = () => {
@@ -116,8 +115,7 @@ export default function App() {
 }
 
 function shuffle(array) {
-  let currentIndex = array.length,
-    randomIndex;
+  let currentIndex = array.length, randomIndex;
   while (currentIndex !== 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
