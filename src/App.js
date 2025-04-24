@@ -47,26 +47,27 @@ const subsections = {
 
 function DraggableItem({ id, children }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
-  const style = transform ? {
-    transform: `translate(${transform.x}px, ${transform.y}px)`
-  } : undefined;
+  const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)` } : undefined;
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes} className="p-2 bg-white shadow border rounded mb-2 cursor-move">
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes} className="p-3 bg-white shadow-md border rounded-lg mb-3 cursor-grab hover:shadow-lg transition">
       {children}
     </div>
   );
 }
 
-function DroppableSlot({ id, label, current, onDrop, showCorrect }) {
+function DroppableSlot({ id, label, current, showCorrect }) {
   const { isOver, setNodeRef } = useDroppable({ id });
   const isCorrect = current === id;
   return (
-    <div ref={setNodeRef} className={`border p-2 rounded mb-2 min-h-[3rem] ${isOver ? 'bg-blue-100' : 'bg-gray-100'}`}>
-      <div className="font-semibold mb-1">{label}</div>
-      <div className="min-h-[1.5rem]">
+    <div
+      ref={setNodeRef}
+      className={`rounded-lg p-3 min-h-[3rem] mb-3 transition border-2 ${isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'}`}
+    >
+      <div className="text-sm text-gray-600 font-semibold mb-1">{label}</div>
+      <div className="text-base">
         {current && <div>{current}</div>}
-        {showCorrect && !isCorrect && current && <div className="text-sm text-red-600">Correct: {id}</div>}
-        {showCorrect && isCorrect && current && <div className="text-sm text-green-600">✅ Correct</div>}
+        {showCorrect && !isCorrect && current && <div className="text-sm text-red-600 mt-1">Correct: {id}</div>}
+        {showCorrect && isCorrect && current && <div className="text-sm text-green-600 mt-1">✅ Correct</div>}
       </div>
     </div>
   );
@@ -95,26 +96,28 @@ export default function App() {
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="p-4 max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4">IB Financial Statement Trainer</h1>
+      <div className="p-6 max-w-6xl mx-auto font-sans">
+        <h1 className="text-3xl font-bold mb-6 text-center">IB Financial Statement Trainer</h1>
 
-        <label className="mb-2 block font-semibold">Select Statement:</label>
-        <select
-          className="p-2 border rounded mb-6"
-          value={mode}
-          onChange={(e) => {
-            setMode(e.target.value);
-            handleReset();
-          }}
-        >
-          {Object.keys(statements).map((key) => (
-            <option key={key}>{key}</option>
-          ))}
-        </select>
+        <div className="mb-8 text-center">
+          <label className="mr-2 text-lg font-medium">Select Statement:</label>
+          <select
+            className="p-2 border rounded"
+            value={mode}
+            onChange={(e) => {
+              setMode(e.target.value);
+              handleReset();
+            }}
+          >
+            {Object.keys(statements).map((key) => (
+              <option key={key}>{key}</option>
+            ))}
+          </select>
+        </div>
 
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-2 gap-10">
           <div>
-            <h2 className="text-lg font-semibold mb-2">Draggable Accounts</h2>
+            <h2 className="text-xl font-semibold mb-4 border-b pb-2">Draggable Accounts</h2>
             {draggableItems.map((item) => (
               <DraggableItem key={item} id={item}>{item}</DraggableItem>
             ))}
@@ -123,15 +126,14 @@ export default function App() {
           <div>
             {modeSubsections &&
               Object.entries(modeSubsections).map(([sectionTitle, sectionItems]) => (
-                <div key={sectionTitle} className="border border-gray-300 rounded p-3 mb-4">
-                  <h2 className="text-lg font-semibold mb-2">{sectionTitle}</h2>
+                <div key={sectionTitle} className="bg-white border rounded-lg p-4 mb-6 shadow-sm">
+                  <h2 className="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">{sectionTitle}</h2>
                   {sectionItems.map((itemLabel) => (
                     <DroppableSlot
                       key={itemLabel}
                       id={itemLabel}
                       label={itemLabel}
                       current={placements[itemLabel]}
-                      onDrop={handleDragEnd}
                       showCorrect={submitted}
                     />
                   ))}
@@ -140,16 +142,16 @@ export default function App() {
           </div>
         </div>
 
-        <div className="mt-6 space-x-4">
+        <div className="mt-10 flex justify-center space-x-6">
           <button
             onClick={() => setSubmitted(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-green-600 text-white px-5 py-2 rounded-lg shadow hover:bg-green-700 transition"
           >
             Check Answers
           </button>
           <button
             onClick={handleReset}
-            className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400"
+            className="bg-gray-300 text-black px-5 py-2 rounded-lg shadow hover:bg-gray-400 transition"
           >
             Reset
           </button>
