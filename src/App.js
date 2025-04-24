@@ -116,17 +116,19 @@ function DroppableSlot({ id, current, showCorrect }) {
   return (
     <div
       ref={setNodeRef}
-    <div
-      ref={setNodeRef}
-      className={`h-12 border border-gray-300 bg-white px-3 py-2 text-sm text-center whitespace-nowrap overflow-hidden rounded ${
-        isOver ? 'border-blue-400 bg-blue-50' : ''
-      }`}
+      className={`h-12 px-3 py-2 text-sm text-center rounded border ${highlight} flex items-center justify-center`}
     >
-      {current || <span className="text-gray-400 italic">Drop an account here</span>}
-      {showCorrect && current && (
-        <div className={`text-xs mt-1 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-          {isCorrect ? '✅ Correct' : `Correct: ${id}`}
+      {current ? (
+        <div>
+          <div>{current}</div>
+          {showCorrect && (
+            <div className={`text-xs mt-1 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+              {isCorrect ? '✅ Correct' : `Correct: ${id}`}
+            </div>
+          )}
         </div>
+      ) : (
+        <div className="text-gray-300 italic">&nbsp;</div>
       )}
     </div>
   );
