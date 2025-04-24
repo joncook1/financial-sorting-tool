@@ -31,7 +31,7 @@ function DraggableItem({ id, children }) {
 function DroppableZone({ id, children }) {
   const { isOver, setNodeRef } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className={\`dropzone \${isOver ? "dropzone-over" : ""}\`}>
+    <div ref={setNodeRef} className={`dropzone ${isOver ? "dropzone-over" : ""}`}>
       <h3>{id}</h3>
       {children}
     </div>
