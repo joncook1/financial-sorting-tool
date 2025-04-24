@@ -49,7 +49,13 @@ function DraggableItem({ id, children }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
   const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)` } : undefined;
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes} className="p-3 bg-white shadow-md border rounded-lg mb-3 cursor-grab hover:shadow-lg transition">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      className="p-3 bg-white shadow-md border rounded-lg mb-3 cursor-grab hover:shadow-lg transition text-center"
+    >
       {children}
     </div>
   );
@@ -61,14 +67,21 @@ function DroppableSlot({ id, label, current, showCorrect }) {
   return (
     <div
       ref={setNodeRef}
-      className={`rounded-lg p-3 min-h-[3rem] mb-3 transition border-2 ${isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'}`}
+      className={`rounded-lg p-3 h-20 flex flex-col justify-center items-center mb-3 transition border-2 text-center font-medium text-gray-800 ${
+        isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'
+      }`}
     >
-      <div className="text-sm text-gray-600 font-semibold mb-1">{label}</div>
-      <div className="text-base">
-        {current && <div>{current}</div>}
-        {showCorrect && !isCorrect && current && <div className="text-sm text-red-600 mt-1">Correct: {id}</div>}
-        {showCorrect && isCorrect && current && <div className="text-sm text-green-600 mt-1">✅ Correct</div>}
-      </div>
+      {current ? (
+        <div>{current}</div>
+      ) : (
+        <div className="text-sm text-gray-500">Drag here: {label}</div>
+      )}
+      {showCorrect && !isCorrect && current && (
+        <div className="text-sm text-red-600 mt-1">Correct: {id}</div>
+      )}
+      {showCorrect && isCorrect && current && (
+        <div className="text-sm text-green-600 mt-1">✅ Correct</div>
+      )}
     </div>
   );
 }
@@ -118,9 +131,11 @@ export default function App() {
         <div className="grid grid-cols-2 gap-10">
           <div>
             <h2 className="text-xl font-semibold mb-4 border-b pb-2">Draggable Accounts</h2>
-            {draggableItems.map((item) => (
-              <DraggableItem key={item} id={item}>{item}</DraggableItem>
-            ))}
+            <div className="bg-gray-50 border rounded-lg p-4">
+              {draggableItems.map((item) => (
+                <DraggableItem key={item} id={item}>{item}</DraggableItem>
+              ))}
+            </div>
           </div>
 
           <div>
