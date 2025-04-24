@@ -41,7 +41,7 @@ const subsections = {
     "Results": ["Gross Profit", "Net Profit"]
   },
   "Cash Flow Forecast": {
-    "Sections": ["Opening Balance", "Cash Inflows", "Cash Outflows", "Net Cash Flow", "Closing Balance"]
+    "": ["Opening Balance", "Cash Inflows", "Cash Outflows", "Net Cash Flow", "Closing Balance"]
   }
 };
 
@@ -61,7 +61,7 @@ function DraggableItem({ id, children }) {
   );
 }
 
-function DroppableSlot({ id, label, current, showCorrect }) {
+function DroppableSlot({ id, current, showCorrect }) {
   const { isOver, setNodeRef } = useDroppable({ id });
   const isCorrect = current === id;
   return (
@@ -74,7 +74,7 @@ function DroppableSlot({ id, label, current, showCorrect }) {
       {current ? (
         <div>{current}</div>
       ) : (
-        <div className="text-sm text-gray-500">Drag here: {label}</div>
+        <div className="text-sm text-gray-400 italic">Drop an account here</div>
       )}
       {showCorrect && !isCorrect && current && (
         <div className="text-sm text-red-600 mt-1">Correct: {id}</div>
@@ -142,12 +142,11 @@ export default function App() {
             {modeSubsections &&
               Object.entries(modeSubsections).map(([sectionTitle, sectionItems]) => (
                 <div key={sectionTitle} className="bg-white border rounded-lg p-4 mb-6 shadow-sm">
-                  <h2 className="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">{sectionTitle}</h2>
+                  {sectionTitle && <h2 className="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">{sectionTitle}</h2>}
                   {sectionItems.map((itemLabel) => (
                     <DroppableSlot
                       key={itemLabel}
                       id={itemLabel}
-                      label={itemLabel}
                       current={placements[itemLabel]}
                       showCorrect={submitted}
                     />
