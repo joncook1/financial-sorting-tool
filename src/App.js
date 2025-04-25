@@ -126,9 +126,14 @@ export default function App() {
   const [placements, setPlacements] = useState({});
   const [showCorrect, setShowCorrect] = useState(false);
 
-  const modeSubsections = subsections[mode];
-  const draggableItems = statements[mode].map(i => i.correct).sort(() => Math.random() - 0.5);
+    const modeSubsections = subsections[mode];
+  // Generate draggable items: used items first, then unused (randomized)
+  const allItems = statements[mode].map(i => i.correct);
+  const randomized = [...allItems].sort(() => Math.random() - 0.5);
   const usedItems = Object.values(placements);
+  const used = randomized.filter(item => usedItems.includes(item));
+  const unused = randomized.filter(item => !usedItems.includes(item));
+  const draggableItems = [...used, ...unused];
 
   const handleDragEnd = ({ active, over }) => {
     if (over && active) {
