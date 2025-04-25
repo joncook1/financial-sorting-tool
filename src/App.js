@@ -96,10 +96,9 @@ const figures = {
   }
 };
 
-function DraggableItem({ id, hidden }) {
+function DraggableItem({ id }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
   const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)` } : undefined;
-  if (hidden) return null;
   return (
     <div
       ref={setNodeRef}
@@ -133,14 +132,19 @@ export default function App() {
   const [placements, setPlacements] = useState({});
   const [showCorrect, setShowCorrect] = useState(false);
 
-  const currentStatement = statements[mode];
   const modeSubsections = subsections[mode];
-  const usedItems = Object.values(placements);
-  const draggableItems = currentStatement.map((i) => i.correct).sort(() => Math.random() - 0.5);
+  const draggableItems = statements[mode].map(i => i.correct).sort(() => Math.random() - 0.5);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (over && active) setPlacements({ ...placements, [over.id]: active.id });
+    if (over && active) {
+      // Remove previous placement for this item
+      const updated = Object.fromEntries(
+        Object.entries(placements).filter(([slot, val]) => val !== active.id)
+      );
+      updated[over.id] = active.id;
+      setPlacements(updated);
+    }
   };
 
   const handleReset = () => { setPlacements({}); setShowCorrect(false); };
@@ -157,52 +161,38 @@ export default function App() {
             value={mode}
             onChange={(e) => { setMode(e.target.value); handleReset(); }}
           >
-            {Object.keys(statements).map((key) => (
+            {Object.keys(statements).map(key => (
               <option key={key}>{key}</option>
             ))}
           </select>
         </div>
-
         <div className="row">
-          {/* Fixed Statement on left */}
           <div className="col-md-8">
-            <div className="card mb-4">
-              <div className="card-body">
-                <h2 className="h5 text-center mb-3">{mode}</h2>
-                {Object.entries(modeSubsections).map(([sectionTitle, sectionItems]) => (
-                  <div key={sectionTitle} className="mb-3">
-                    {sectionTitle && <h3 className="h6 border-bottom pb-1">{sectionTitle}</h3>}
-                    <table className="table table-bordered mb-0">
-                      <thead>
-                        <tr>
-                          <th>Account</th>
-                          <th className="text-end">Amount</th>
+            <div className="card mb-4"><div className="card-body">
+              <h2 className="h5 text-center mb-3">{mode}</h2>
+              {Object.entries(modeSubsections).map(([sectionTitle, sectionItems]) => (
+                <div key={sectionTitle} className="mb-3">
+                  {sectionTitle && <h3 className="h6 border-bottom pb-1">{sectionTitle}</h3>}
+                  <table className="table table-bordered mb-0">
+                    <thead><tr><th>Account</th><th className="text-end">Amount</th></tr></thead>
+                    <tbody>
+                      {sectionItems.map(itemLabel => (
+                        <tr key={itemLabel}>
+                          <td><DroppableSlot id={itemLabel} current={placements[itemLabel]} showCorrect={showCorrect}/></td>
+                          <td className="text-end">{figures[mode][itemLabel].toLocaleString()}</td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {sectionItems.map((itemLabel) => (
-                          <tr key={itemLabel}>
-                            <td>
-                              <DroppableSlot id={itemLabel} current={placements[itemLabel]} showCorrect={showCorrect} />
-                            </td>
-                            <td className="text-end">{figures[mode][itemLabel].toLocaleString()}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ))}
-              </div>
-            </div>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))}
+            </div></div>
           </div>
-          {/* Draggables on right */}
           <div className="col-md-4">
             <h2 className="h5 mb-3">Draggable Accounts</h2>
             <div className="row gy-2">
-              {draggableItems.map((item) => (
-                <div className="col-12" key={item}>
-                  <DraggableItem id={item} hidden={usedItems.includes(item)} />
-                </div>
+              {draggableItems.map(item => (
+                <div className="col-12" key={item}><DraggableItem id={item}/></div>
               ))}
             </div>
             <div className="mt-4 text-center">
