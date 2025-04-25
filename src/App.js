@@ -99,18 +99,10 @@ const figures = {
 function DraggableItem({ id, used }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
   const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)` } : undefined;
-  const baseClass = "border text-center p-2 mb-2 rounded";
-  const colorClass = used
-    ? "bg-secondary text-white"
-    : "bg-light text-dark";
+  const base = "border text-center p-2 mb-2 rounded";
+  const color = used ? "bg-secondary text-white" : "bg-light text-dark";
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
-      className={`${baseClass} ${colorClass}`}
-    >
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes} className={`${base} ${color}`}>
       {id}
     </div>
   );
@@ -118,18 +110,12 @@ function DraggableItem({ id, used }) {
 
 function DroppableSlot({ id, current, showCorrect }) {
   const { isOver, setNodeRef } = useDroppable({ id });
-  let highlightClass = isOver ? 'border-primary bg-light' : 'border-secondary bg-white';
+  let highlight = isOver ? 'border-primary bg-light' : 'border-secondary bg-white';
   if (showCorrect) {
-    highlightClass = current === id
-      ? 'border-success bg-success text-white'
-      : 'border-danger bg-danger text-white';
+    highlight = current === id ? 'border-success bg-success text-white' : 'border-danger bg-danger text-white';
   }
   return (
-    <div
-      ref={setNodeRef}
-      className={`border ${highlightClass} p-2 text-center mb-2 rounded`}
-      style={{ minHeight: '2.5rem' }}
-    >
+    <div ref={setNodeRef} className={`border ${highlight} p-2 text-center mb-2 rounded`} style={{ minHeight: '2.5rem' }}> 
       {current || ''}
     </div>
   );
@@ -141,16 +127,12 @@ export default function App() {
   const [showCorrect, setShowCorrect] = useState(false);
 
   const modeSubsections = subsections[mode];
-  const draggableItems = statements[mode]
-    .map(i => i.correct)
-    .sort(() => Math.random() - 0.5);
+  const draggableItems = statements[mode].map(i => i.correct).sort(() => Math.random() - 0.5);
   const usedItems = Object.values(placements);
 
   const handleDragEnd = ({ active, over }) => {
     if (over && active) {
-      const updated = Object.fromEntries(
-        Object.entries(placements).filter(([slot, val]) => val !== active.id)
-      );
+      const updated = Object.fromEntries(Object.entries(placements).filter(([slot, val]) => val !== active.id));
       updated[over.id] = active.id;
       setPlacements(updated);
     }
@@ -158,6 +140,16 @@ export default function App() {
 
   const handleReset = () => { setPlacements({}); setShowCorrect(false); };
   const handleCheck = () => setShowCorrect(true);
+  const handleHint = () => {
+    if (mode !== "Statement of Financial Position") return;
+    // Collect all slots for this statement
+    const slots = Object.values(subsections[mode]).flat();
+    // Find first unplaced slot
+    const unplaced = slots.find(slot => !placements[slot]);
+    if (unplaced) {
+      setPlacements({ ...placements, [unplaced]: unplaced });
+    }
+  };
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
@@ -165,14 +157,8 @@ export default function App() {
         <h1 className="display-6 text-center mb-4">IB Financial Statement Trainer</h1>
         <div className="mb-4 text-center">
           <label className="form-label me-2">Select Statement:</label>
-          <select
-            className="form-select d-inline-block w-auto"
-            value={mode}
-            onChange={e => { setMode(e.target.value); handleReset(); }}
-          >
-            {Object.keys(statements).map(key => (
-              <option key={key}>{key}</option>
-            ))}
+          <select className="form-select d-inline-block w-auto" value={mode} onChange={e => { setMode(e.target.value); handleReset(); }}>
+            {Object.keys(statements).map(key => <option key={key}>{key}</option>)}
           </select>
         </div>
         <div className="row">
@@ -200,13 +186,10 @@ export default function App() {
           <div className="col-md-4">
             <h2 className="h5 mb-3">Draggable Accounts</h2>
             <div className="row gy-2">
-              {draggableItems.map(item => (
-                <div className="col-12" key={item}>
-                  <DraggableItem id={item} used={usedItems.includes(item)} />
-                </div>
-              ))}
+              {draggableItems.map(item => <div className="col-12" key={item}><DraggableItem id={item} used={usedItems.includes(item)} /></div>)}
             </div>
             <div className="mt-4 text-center">
+              {mode === "Statement of Financial Position" && <button onClick={handleHint} className="btn btn-info me-2">Hint</button>}
               <button onClick={handleCheck} className="btn btn-success me-2">Check Answers</button>
               <button onClick={handleReset} className="btn btn-secondary">Reset</button>
             </div>
