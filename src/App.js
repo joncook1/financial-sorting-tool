@@ -1,19 +1,13 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 
-// Define the account labels and correct answers
-type StatementKey =
-  | "Statement of Profit or Loss"
-  | "Statement of Financial Position"
-  | "Cash Flow Forecast";
-
-const statements: Record<StatementKey, { label: string; correct: string }[]> = {
+const statements = {
   "Statement of Profit or Loss": [
     { label: "Sales Revenue", correct: "Sales Revenue" },
     { label: "Cost of Goods Sold", correct: "Cost of Goods Sold" },
     { label: "Gross Profit", correct: "Gross Profit" },
     { label: "Operating Expenses", correct: "Operating Expenses" },
-    { label: "Net Profit", correct: "Net Profit" },
+    { label: "Net Profit", correct: "Net Profit" }
   ],
   "Statement of Financial Position": [
     { label: "Property, plant and equipment", correct: "Property, plant and equipment" },
@@ -34,72 +28,37 @@ const statements: Record<StatementKey, { label: string; correct: string }[]> = {
     { label: "Net Assets", correct: "Net Assets" },
     { label: "Share Capital", correct: "Share Capital" },
     { label: "Retained Earnings", correct: "Retained Earnings" },
-    { label: "Equity", correct: "Equity" },
+    { label: "Equity", correct: "Equity" }
   ],
   "Cash Flow Forecast": [
     { label: "Opening Balance", correct: "Opening Balance" },
     { label: "Cash Inflows", correct: "Cash Inflows" },
     { label: "Cash Outflows", correct: "Cash Outflows" },
     { label: "Net Cash Flow", correct: "Net Cash Flow" },
-    { label: "Closing Balance", correct: "Closing Balance" },
+    { label: "Closing Balance", correct: "Closing Balance" }
   ]
 };
 
-// Define the IB-style subsections
-const subsections: Record<StatementKey, Record<string, string[]>> = {
+const subsections = {
   "Statement of Profit or Loss": {
-    "": [
-      "Sales Revenue",
-      "Cost of Goods Sold",
-      "Gross Profit",
-      "Operating Expenses",
-      "Net Profit"
-    ]
+    "": ["Sales Revenue", "Cost of Goods Sold", "Gross Profit", "Operating Expenses", "Net Profit"]
   },
   "Statement of Financial Position": {
-    "Non-current Assets": [
-      "Property, plant and equipment",
-      "Accumulated Depreciation",
-      "Non-current Assets"
-    ],
-    "Current Assets": [
-      "Cash",
-      "Debtors",
-      "Stock/Inventory",
-      "Current Assets"
-    ],
+    "Non-current Assets": ["Property, plant and equipment", "Accumulated Depreciation", "Non-current Assets"],
+    "Current Assets": ["Cash", "Debtors", "Stock/Inventory", "Current Assets"],
     "Assets Summary": ["Total Assets"],
-    "Current Liabilities": [
-      "Bank Overdraft",
-      "Trade Creditors",
-      "Other Short-Term Loans",
-      "Current Liabilities"
-    ],
-    "Non-current Liabilities": [
-      "Borrowings-Long Term Loans",
-      "Long-term Liabilities"
-    ],
+    "Current Liabilities": ["Bank Overdraft", "Trade Creditors", "Other Short-Term Loans", "Current Liabilities"],
+    "Non-current Liabilities": ["Borrowings-Long Term Loans", "Long-term Liabilities"],
     "Liabilities Summary": ["Total Liabilities"],
     "Net Assets": ["Net Assets"],
-    "Equity": [
-      "Share Capital",
-      "Retained Earnings",
-      "Equity"
-    ]
+    "Equity": ["Share Capital", "Retained Earnings", "Equity"]
   },
   "Cash Flow Forecast": {
-    "": [
-      "Opening Balance",
-      "Cash Inflows",
-      "Cash Outflows",
-      "Net Cash Flow",
-      "Closing Balance"
-    ]
+    "": ["Opening Balance", "Cash Inflows", "Cash Outflows", "Net Cash Flow", "Closing Balance"]
   }
 };
 
-// Example financial figures to display alongside labels
-const figures: Record<StatementKey, Record<string, number>> = {
+const figures = {
   "Statement of Profit or Loss": {
     "Sales Revenue": 200000,
     "Cost of Goods Sold": 120000,
@@ -137,7 +96,7 @@ const figures: Record<StatementKey, Record<string, number>> = {
   }
 };
 
-function DraggableItem({ id, children, hidden }: { id: string; children: React.ReactNode; hidden?: boolean }) {
+function DraggableItem({ id, hidden }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
   const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)` } : undefined;
   if (hidden) return null;
@@ -149,12 +108,12 @@ function DraggableItem({ id, children, hidden }: { id: string; children: React.R
       {...attributes}
       className="border bg-light text-center p-2 mb-2 rounded"
     >
-      {children}
+      {id}
     </div>
   );
 }
 
-function DroppableSlot({ id, current }: { id: string; current?: string }) {
+function DroppableSlot({ id, current }) {
   const { isOver, setNodeRef } = useDroppable({ id });
   const highlight = isOver ? 'border-primary bg-light' : 'border-secondary bg-white';
 
@@ -170,17 +129,15 @@ function DroppableSlot({ id, current }: { id: string; current?: string }) {
 }
 
 export default function App() {
-  const [mode, setMode] = useState<StatementKey>("Statement of Profit or Loss");
-  const [placements, setPlacements] = useState<Record<string, string>>({});
+  const [mode, setMode] = useState("Statement of Profit or Loss");
+  const [placements, setPlacements] = useState({});
 
   const currentStatement = statements[mode];
   const modeSubsections = subsections[mode];
   const usedItems = Object.values(placements);
-  const draggableItems = currentStatement
-    .map((i) => i.correct)
-    .sort(() => Math.random() - 0.5);
+  const draggableItems = currentStatement.map((i) => i.correct).sort(() => Math.random() - 0.5);
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event) => {
     const { active, over } = event;
     if (over && active) {
       setPlacements({ ...placements, [over.id]: active.id });
@@ -201,10 +158,7 @@ export default function App() {
           <select
             className="form-select d-inline-block w-auto"
             value={mode}
-            onChange={(e) => {
-              setMode(e.target.value as StatementKey);
-              handleReset();
-            }}
+            onChange={(e) => { setMode(e.target.value); handleReset(); }}
           >
             {Object.keys(statements).map((key) => (
               <option key={key}>{key}</option>
@@ -217,9 +171,7 @@ export default function App() {
           <div className="row gy-2">
             {draggableItems.map((item) => (
               <div className="col-6 col-md-3" key={item}>
-                <DraggableItem id={item} hidden={usedItems.includes(item)}>
-                  {item}
-                </DraggableItem>
+                <DraggableItem id={item} hidden={usedItems.includes(item)} />
               </div>
             ))}
           </div>
@@ -232,18 +184,19 @@ export default function App() {
               <div key={sectionTitle} className="mb-3">
                 {sectionTitle && <h3 className="h6 border-bottom pb-1">{sectionTitle}</h3>}
                 <table className="table table-bordered mb-0">
-                  <thead><tr><th>Account</th><th className="text-end">Amount</th><th>Place</th></tr></thead>
+                  <thead>
+                    <tr>
+                      <th>Account</th>
+                      <th className="text-end">Amount</th>
+                      <th>Place</th>
+                    </tr>
+                  </thead>
                   <tbody>
                     {sectionItems.map((itemLabel) => (
                       <tr key={itemLabel}>
                         <td>{itemLabel}</td>
                         <td className="text-end">{figures[mode][itemLabel].toLocaleString()}</td>
-                        <td>
-                          <DroppableSlot
-                            id={itemLabel}
-                            current={placements[itemLabel]}
-                          />
-                        </td>
+                        <td><DroppableSlot id={itemLabel} current={placements[itemLabel]} /></td>
                       </tr>
                     ))}
                   </tbody>
@@ -254,12 +207,7 @@ export default function App() {
         </div>
 
         <div className="text-center">
-          <button
-            onClick={handleReset}
-            className="btn btn-secondary"
-          >
-            Reset
-          </button>
+          <button onClick={handleReset} className="btn btn-secondary">Reset</button>
         </div>
       </div>
     </DndContext>
