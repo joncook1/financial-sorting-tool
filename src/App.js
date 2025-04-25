@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import StatementTrainer from './StatementTrainer';
 import PracticeSimulation from './PracticeSimulation';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function App() {
   const pages = [
