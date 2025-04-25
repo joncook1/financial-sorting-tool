@@ -170,7 +170,7 @@ export default function PracticeSimulation() {
         </div>
       </div>
 
-      {/* Q3 */ */}
+      {/* Q3 */}
       <div className="mb-4">
         <h4>3. Explain one reason for GM manufacturing on the ISS. [2]</h4>
         <DroppableSlot id="reason" />
