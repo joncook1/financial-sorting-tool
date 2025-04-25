@@ -63,11 +63,20 @@ export default function PracticeSimulation() {
     if (placements['arr'] === correctArr) pts += 2;
     // Q2.iii
     if (commentary.trim().length > 10) pts += 1;
+    // Q2.iv - formula
+    let formulaCorrectCount = 0;
+    formulaTokens.forEach((_, idx) => {
+      if (placements[`formula-${idx}`] === correctFormula[idx]) {
+        formulaCorrectCount++;
+      }
+    });
+    if (formulaCorrectCount === formulaTokens.length) pts += 2;
     // Q3
     if (correctReasons.includes(placements['reason'])) pts += 2;
 
     setScore(pts);
     setShowResults(true);
+  };
   };
 
   // Draggable item
@@ -170,7 +179,7 @@ export default function PracticeSimulation() {
         </div>
       </div>
 
-      {/* Q3 */}
+      {/* Q3 */ */}
       <div className="mb-4">
         <h4>3. Explain one reason for GM manufacturing on the ISS. [2]</h4>
         <DroppableSlot id="reason" />
