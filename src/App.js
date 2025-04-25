@@ -96,16 +96,20 @@ const figures = {
   }
 };
 
-function DraggableItem({ id }) {
+function DraggableItem({ id, used }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
   const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)` } : undefined;
+  const baseClass = "border text-center p-2 mb-2 rounded";
+  const colorClass = used
+    ? "bg-secondary text-white"
+    : "bg-light text-dark";
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...listeners}
       {...attributes}
-      className="border bg-light text-center p-2 mb-2 rounded"
+      className={`${baseClass} ${colorClass}`}
     >
       {id}
     </div>
@@ -114,12 +118,16 @@ function DraggableItem({ id }) {
 
 function DroppableSlot({ id, current, showCorrect }) {
   const { isOver, setNodeRef } = useDroppable({ id });
-  let highlight = isOver ? 'border-primary bg-light' : 'border-secondary bg-white';
-  if (showCorrect) highlight = current === id ? 'border-success bg-light' : 'border-danger bg-white';
+  let highlightClass = isOver ? 'border-primary bg-light' : 'border-secondary bg-white';
+  if (showCorrect) {
+    highlightClass = current === id
+      ? 'border-success bg-success text-white'
+      : 'border-danger bg-danger text-white';
+  }
   return (
     <div
       ref={setNodeRef}
-      className={`border ${highlight} p-2 text-center mb-2 rounded`}
+      className={`border ${highlightClass} p-2 text-center mb-2 rounded`}
       style={{ minHeight: '2.5rem' }}
     >
       {current || ''}
@@ -133,12 +141,13 @@ export default function App() {
   const [showCorrect, setShowCorrect] = useState(false);
 
   const modeSubsections = subsections[mode];
-  const draggableItems = statements[mode].map(i => i.correct).sort(() => Math.random() - 0.5);
+  const draggableItems = statements[mode]
+    .map(i => i.correct)
+    .sort(() => Math.random() - 0.5);
+  const usedItems = Object.values(placements);
 
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
+  const handleDragEnd = ({ active, over }) => {
     if (over && active) {
-      // Remove previous placement for this item
       const updated = Object.fromEntries(
         Object.entries(placements).filter(([slot, val]) => val !== active.id)
       );
@@ -159,7 +168,7 @@ export default function App() {
           <select
             className="form-select d-inline-block w-auto"
             value={mode}
-            onChange={(e) => { setMode(e.target.value); handleReset(); }}
+            onChange={e => { setMode(e.target.value); handleReset(); }}
           >
             {Object.keys(statements).map(key => (
               <option key={key}>{key}</option>
@@ -178,7 +187,7 @@ export default function App() {
                     <tbody>
                       {sectionItems.map(itemLabel => (
                         <tr key={itemLabel}>
-                          <td><DroppableSlot id={itemLabel} current={placements[itemLabel]} showCorrect={showCorrect}/></td>
+                          <td><DroppableSlot id={itemLabel} current={placements[itemLabel]} showCorrect={showCorrect} /></td>
                           <td className="text-end">{figures[mode][itemLabel].toLocaleString()}</td>
                         </tr>
                       ))}
@@ -192,7 +201,9 @@ export default function App() {
             <h2 className="h5 mb-3">Draggable Accounts</h2>
             <div className="row gy-2">
               {draggableItems.map(item => (
-                <div className="col-12" key={item}><DraggableItem id={item}/></div>
+                <div className="col-12" key={item}>
+                  <DraggableItem id={item} used={usedItems.includes(item)} />
+                </div>
               ))}
             </div>
             <div className="mt-4 text-center">
