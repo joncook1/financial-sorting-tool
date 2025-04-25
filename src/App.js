@@ -184,23 +184,23 @@ export default function App() {
               <div key={sectionTitle} className="mb-3">
                 {sectionTitle && <h3 className="h6 border-bottom pb-1">{sectionTitle}</h3>}
                 <table className="table table-bordered mb-0">
-                  <thead>
-                    <tr>
-                      <th>Account</th>
-                      <th className="text-end">Amount</th>
-                      <th>Place</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sectionItems.map((itemLabel) => (
-                      <tr key={itemLabel}>
-                        <td>{itemLabel}</td>
-                        <td className="text-end">{figures[mode][itemLabel].toLocaleString()}</td>
-                        <td><DroppableSlot id={itemLabel} current={placements[itemLabel]} /></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+  <thead>
+    <tr>
+      <th className="text-end">Amount</th>
+      <th>Account</th>
+    </tr>
+  </thead>
+  <tbody>
+    {sectionItems.map((itemLabel) => (
+      <tr key={itemLabel}>
+        <td className="text-end">{figures[mode][itemLabel].toLocaleString()}</td>
+        <td>
+          <DroppableSlot id={itemLabel} current={placements[itemLabel]} />
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
               </div>
             ))}
           </div>
