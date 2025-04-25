@@ -101,7 +101,7 @@ function DraggableItem({ id, children, hidden }) {
       style={style}
       {...listeners}
       {...attributes}
-      className="p-3 bg-white shadow-md border rounded text-center text-sm cursor-grab hover:shadow-lg"
+      className="border bg-light text-center p-2 mb-2 rounded"
     >
       {children}
     </div>
@@ -111,24 +111,19 @@ function DraggableItem({ id, children, hidden }) {
 function DroppableSlot({ id, current, showCorrect }) {
   const { isOver, setNodeRef } = useDroppable({ id });
   const isCorrect = current === id;
-  const highlight = isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-300 bg-gray-100';
+  const highlight = isOver ? 'border-primary bg-light' : 'border-secondary bg-white';
 
   return (
     <div
       ref={setNodeRef}
-      className={`h-12 px-3 py-2 text-sm text-center rounded border ${highlight} flex items-center justify-center`}
+      className={`border ${highlight} p-2 text-center mb-2 rounded`}
+      style={{ minHeight: '2.5rem' }}
     >
-      {current ? (
-        <div>
-          <div>{current}</div>
-          {showCorrect && (
-            <div className={`text-xs mt-1 ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-              {isCorrect ? '✅ Correct' : `Correct: ${id}`}
-            </div>
-          )}
+      {current || ''}
+      {showCorrect && current && (
+        <div className={`small mt-1 text-${isCorrect ? 'success' : 'danger'}`}>    
+          {isCorrect ? '✔️' : id}
         </div>
-      ) : (
-        <div className="text-gray-300 italic">&nbsp;</div>
       )}
     </div>
   );
@@ -160,13 +155,13 @@ export default function App() {
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className="p-6 max-w-5xl mx-auto font-sans">
-        <h1 className="text-3xl font-bold mb-6 text-center">IB Financial Statement Trainer</h1>
+      <div className="container py-4">
+        <h1 className="display-6 text-center mb-4">IB Financial Statement Trainer</h1>
 
-        <div className="mb-6 text-center">
-          <label className="mr-2 text-lg font-medium">Select Statement:</label>
+        <div className="mb-4 text-center">
+          <label className="form-label me-2">Select Statement:</label>
           <select
-            className="p-2 border rounded"
+            className="form-select d-inline-block w-auto"
             value={mode}
             onChange={(e) => {
               setMode(e.target.value);
@@ -179,29 +174,31 @@ export default function App() {
           </select>
         </div>
 
-        <div className="mb-10">
-          <h2 className="text-xl font-semibold mb-4">Draggable Accounts</h2>
-          <div className="bg-gray-50 border rounded p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div className="mb-4">
+          <h2 className="h5 mb-3">Draggable Accounts</h2>
+          <div className="row gy-2">
             {draggableItems.map((item) => (
-              <DraggableItem key={item} id={item} hidden={usedItems.includes(item)}>
-                {item}
-              </DraggableItem>
+              <div className="col-6 col-md-3" key={item}>
+                <DraggableItem id={item} hidden={usedItems.includes(item)}>
+                  {item}
+                </DraggableItem>
+              </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-white border rounded p-6 shadow">
-          <h2 className="text-2xl font-semibold text-center mb-6">{mode}</h2>
-          <div className="space-y-8">
+        <div className="card mb-4">
+          <div className="card-body">
+            <h2 className="h5 text-center mb-3">{mode}</h2>
             {Object.entries(modeSubsections).map(([sectionTitle, sectionItems]) => (
-              <div key={sectionTitle}>
-                {sectionTitle && <h3 className="text-md font-bold border-b mb-2 pb-1 text-gray-700">{sectionTitle}</h3>}
-                <table className="w-full table-fixed border-t border-b">
+              <div key={sectionTitle} className="mb-3">
+                {sectionTitle && <h3 className="h6 border-bottom pb-1">{sectionTitle}</h3>}
+                <table className="table table-bordered mb-0">
                   <tbody>
                     {sectionItems.map((itemLabel) => (
-                      <tr key={itemLabel} className="border-b">
-                        <td className="w-1/3 py-1 px-2 text-sm text-left text-gray-700 font-medium">{itemLabel}</td>
-                        <td className="w-2/3 py-1 px-2">
+                      <tr key={itemLabel}>
+                        <td className="w-25">{itemLabel}</td>
+                        <td>
                           <DroppableSlot
                             id={itemLabel}
                             current={placements[itemLabel]}
@@ -217,16 +214,16 @@ export default function App() {
           </div>
         </div>
 
-        <div className="mt-10 flex justify-center gap-4">
+        <div className="text-center">
           <button
             onClick={() => setSubmitted(true)}
-            className="bg-green-600 text-white px-5 py-2 rounded shadow hover:bg-green-700"
+            className="btn btn-success me-2"
           >
             Check Answers
           </button>
           <button
             onClick={handleReset}
-            className="bg-gray-300 text-black px-5 py-2 rounded shadow hover:bg-gray-400"
+            className="btn btn-secondary"
           >
             Reset
           </button>
