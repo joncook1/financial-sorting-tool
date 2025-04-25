@@ -21,6 +21,10 @@ export default function PracticeSimulation() {
   const arrOptions = ['9.06', '9.5', '8.0', '10.0'];
   const reasonOptions = ['Infrastructure availability', 'Proximity to market', 'Expertise development', 'Profitability'];
 
+  // Formula build tokens
+  const formulaTokens = ['(', '54.5', '-', '40', ')', '÷', '4', '×', '100%'];
+  const correctFormula = ['(', '54.5', '-', '40', ')', '÷', '4', '×', '100%'];
+
   // State
   const [placements, setPlacements] = useState({});
   const [commentary, setCommentary] = useState('');
