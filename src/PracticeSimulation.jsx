@@ -151,19 +151,26 @@ export default function PracticeSimulation() {
       {/* Q4: Build the ARR formula */}
       <div className="mb-4">
         <h4>2.iv Build the formula for Average Rate of Return. [2]</h4>
-        <div className="d-flex mb-2">
-          {formulaTokens.map((_, idx) => (
-            <DroppableSlot id={`formula-${idx}`} key={idx} />
-          ))}
+        <div className="mb-2" style={{ fontFamily: 'serif', fontSize: '1.25rem' }}>
+          {(() => {
+            const fixed = new Set(['(', '-', ')', '÷', '×']);
+            return formulaTokens.map((token, idx) =>
+              fixed.has(token) ? (
+                <span key={idx} className="mx-1">{token}</span>
+              ) : (
+                <DroppableSlot key={idx} id={`formula-${idx}`} />
+              )
+            );
+          })()}
         </div>
-        <div className="d-flex flex-wrap">
+        <div className="d-flex flex-wrap mt-2">
           {formulaTokens.map(token => (
             <DraggableItem id={token} key={token} />
           ))}
         </div>
       </div>
 
-      {/* Q3 */}
+      {/* Q3 */ */}
       <div className="mb-4">
         <h4>3. Explain one reason for GM manufacturing on the ISS. [2]</h4>
         <DroppableSlot id="reason" />
