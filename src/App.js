@@ -113,10 +113,12 @@ function DraggableItem({ id, hidden }) {
   );
 }
 
-function DroppableSlot({ id, current }) {
+function DroppableSlot({ id, current, showCorrect }) {
   const { isOver, setNodeRef } = useDroppable({ id });
-  const highlight = isOver ? 'border-primary bg-light' : 'border-secondary bg-white';
-
+  let highlight = isOver ? 'border-primary bg-light' : 'border-secondary bg-white';
+  if (showCorrect) {
+    highlight = current === id ? 'border-success bg-light' : 'border-danger bg-white';
+  }
   return (
     <div
       ref={setNodeRef}
@@ -131,6 +133,7 @@ function DroppableSlot({ id, current }) {
 export default function App() {
   const [mode, setMode] = useState("Statement of Profit or Loss");
   const [placements, setPlacements] = useState({});
+  const [showCorrect, setShowCorrect] = useState(false);
 
   const currentStatement = statements[mode];
   const modeSubsections = subsections[mode];
@@ -146,7 +149,10 @@ export default function App() {
 
   const handleReset = () => {
     setPlacements({});
+    setShowCorrect(false);
   };
+
+  const handleCheck = () => setShowCorrect(true);
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
@@ -184,29 +190,30 @@ export default function App() {
               <div key={sectionTitle} className="mb-3">
                 {sectionTitle && <h3 className="h6 border-bottom pb-1">{sectionTitle}</h3>}
                 <table className="table table-bordered mb-0">
-  <thead>
-    <tr>
-      <th className="text-end">Amount</th>
-      <th>Account</th>
-    </tr>
-  </thead>
-  <tbody>
-    {sectionItems.map((itemLabel) => (
-      <tr key={itemLabel}>
-        <td className="text-end">{figures[mode][itemLabel].toLocaleString()}</td>
-        <td>
-          <DroppableSlot id={itemLabel} current={placements[itemLabel]} />
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+                  <thead>
+                    <tr>
+                      <th className="text-end">Amount</th>
+                      <th>Account</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sectionItems.map((itemLabel) => (
+                      <tr key={itemLabel}>
+                        <td className="text-end">{figures[mode][itemLabel].toLocaleString()}</td>
+                        <td>
+                          <DroppableSlot id={itemLabel} current={placements[itemLabel]} showCorrect={showCorrect} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             ))}
           </div>
         </div>
 
         <div className="text-center">
+          <button onClick={handleCheck} className="btn btn-success me-2">Check Answers</button>
           <button onClick={handleReset} className="btn btn-secondary">Reset</button>
         </div>
       </div>
