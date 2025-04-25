@@ -93,6 +93,7 @@ export default function PracticeSimulation() {
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
+      {/* Case Prompt & Table */}
       <div className="mb-4">
         <p>{prompt}</p>
         <table className="table table-bordered w-auto mb-4">
@@ -143,6 +144,21 @@ export default function PracticeSimulation() {
                   value={commentary} onChange={e=>setCommentary(e.target.value)} />
       </div>
 
+      {/* Q4: Build the ARR formula */}
+      <div className="mb-4">
+        <h4>2.iv Build the formula for Average Rate of Return. [2]</h4>
+        <div className="d-flex mb-2">
+          {formulaTokens.map((_, idx) => (
+            <DroppableSlot id={`formula-${idx}`} key={idx} />
+          ))}
+        </div>
+        <div className="d-flex flex-wrap">
+          {formulaTokens.map(token => (
+            <DraggableItem id={token} key={token} />
+          ))}
+        </div>
+      </div>
+
       {/* Q3 */}
       <div className="mb-4">
         <h4>3. Explain one reason for GM manufacturing on the ISS. [2]</h4>
@@ -161,29 +177,29 @@ export default function PracticeSimulation() {
       {showResults && (
         <div className="border rounded p-3 bg-light">
           <h5>Results &amp; Feedback</h5>
-          <p>Your score: {score} / 10</p>
+          <p>Your score: {score} / 12</p>
           <ul>
-            {/* Q1 feedback */}
             <li>
               Q1: Your answers: {placements['adv1']}, {placements['adv2']}<br/>
               Correct answers: {correctAdvs.join(', ')}
             </li>
-            {/* Q2.i feedback */}
             <li>
               Q2.i Payback: Your answer: {placements['payback'] || 'n/a'}<br/>
               Correct: {correctPayback}
             </li>
-            {/* Q2.ii feedback */}
             <li>
               Q2.ii ARR: Your answer: {placements['arr'] || 'n/a'}<br/>
               Correct: {correctArr}
             </li>
-            {/* Q2.iii feedback */}
             <li>
               Q2.iii Commentary: {commentary || 'n/a'}<br/>
               (Open-ended; see markscheme for guidance)
             </li>
-            {/* Q3 feedback */}
+            <li>
+              Q2.iv Formula: Your formula: {' '}
+              {formulaTokens.map((t, i) => placements[`formula-${i}`] || '___').join(' ')}<br/>
+              Correct: {(correctFormula.join(' '))}
+            </li>
             <li>
               Q3 Reason: Your answer: {placements['reason'] || 'n/a'}<br/>
               Acceptable: {correctReasons.join(', ')}
