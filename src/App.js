@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 
-const statements = {
+// Define the account labels and correct answers
+type StatementKey =
+  | "Statement of Profit or Loss"
+  | "Statement of Financial Position"
+  | "Cash Flow Forecast";
+
+const statements: Record<StatementKey, { label: string; correct: string }[]> = {
   "Statement of Profit or Loss": [
     { label: "Sales Revenue", correct: "Sales Revenue" },
     { label: "Cost of Goods Sold", correct: "Cost of Goods Sold" },
@@ -39,7 +45,8 @@ const statements = {
   ]
 };
 
-const subsections = {
+// Define the IB-style subsections
+const subsections: Record<StatementKey, Record<string, string[]>> = {
   "Statement of Profit or Loss": {
     "": [
       "Sales Revenue",
@@ -91,7 +98,46 @@ const subsections = {
   }
 };
 
-function DraggableItem({ id, children, hidden }) {
+// Example financial figures to display alongside labels
+const figures: Record<StatementKey, Record<string, number>> = {
+  "Statement of Profit or Loss": {
+    "Sales Revenue": 200000,
+    "Cost of Goods Sold": 120000,
+    "Gross Profit": 80000,
+    "Operating Expenses": 30000,
+    "Net Profit": 50000
+  },
+  "Statement of Financial Position": {
+    "Property, plant and equipment": 50000,
+    "Accumulated Depreciation": -10000,
+    "Non-current Assets": 40000,
+    "Cash": 15000,
+    "Debtors": 25000,
+    "Stock/Inventory": 20000,
+    "Current Assets": 60000,
+    "Total Assets": 100000,
+    "Bank Overdraft": -5000,
+    "Trade Creditors": -8000,
+    "Other Short-Term Loans": -2000,
+    "Current Liabilities": -15000,
+    "Borrowings-Long Term Loans": -20000,
+    "Long-term Liabilities": -20000,
+    "Total Liabilities": -35000,
+    "Net Assets": 65000,
+    "Share Capital": 50000,
+    "Retained Earnings": 15000,
+    "Equity": 65000
+  },
+  "Cash Flow Forecast": {
+    "Opening Balance": 10000,
+    "Cash Inflows": 30000,
+    "Cash Outflows": -15000,
+    "Net Cash Flow": 15000,
+    "Closing Balance": 25000
+  }
+};
+
+function DraggableItem({ id, children, hidden }: { id: string; children: React.ReactNode; hidden?: boolean }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
   const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)` } : undefined;
   if (hidden) return null;
@@ -108,9 +154,8 @@ function DraggableItem({ id, children, hidden }) {
   );
 }
 
-function DroppableSlot({ id, current, showCorrect }) {
+function DroppableSlot({ id, current }: { id: string; current?: string }) {
   const { isOver, setNodeRef } = useDroppable({ id });
-  const isCorrect = current === id;
   const highlight = isOver ? 'border-primary bg-light' : 'border-secondary bg-white';
 
   return (
@@ -120,19 +165,13 @@ function DroppableSlot({ id, current, showCorrect }) {
       style={{ minHeight: '2.5rem' }}
     >
       {current || ''}
-      {showCorrect && current && (
-        <div className={`small mt-1 text-${isCorrect ? 'success' : 'danger'}`}>    
-          {isCorrect ? '✔️' : id}
-        </div>
-      )}
     </div>
   );
 }
 
 export default function App() {
-  const [mode, setMode] = useState("Statement of Profit or Loss");
-  const [placements, setPlacements] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [mode, setMode] = useState<StatementKey>("Statement of Profit or Loss");
+  const [placements, setPlacements] = useState<Record<string, string>>({});
 
   const currentStatement = statements[mode];
   const modeSubsections = subsections[mode];
@@ -141,7 +180,7 @@ export default function App() {
     .map((i) => i.correct)
     .sort(() => Math.random() - 0.5);
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (over && active) {
       setPlacements({ ...placements, [over.id]: active.id });
@@ -150,7 +189,6 @@ export default function App() {
 
   const handleReset = () => {
     setPlacements({});
-    setSubmitted(false);
   };
 
   return (
@@ -164,7 +202,7 @@ export default function App() {
             className="form-select d-inline-block w-auto"
             value={mode}
             onChange={(e) => {
-              setMode(e.target.value);
+              setMode(e.target.value as StatementKey);
               handleReset();
             }}
           >
@@ -194,15 +232,16 @@ export default function App() {
               <div key={sectionTitle} className="mb-3">
                 {sectionTitle && <h3 className="h6 border-bottom pb-1">{sectionTitle}</h3>}
                 <table className="table table-bordered mb-0">
+                  <thead><tr><th>Account</th><th className="text-end">Amount</th><th>Place</th></tr></thead>
                   <tbody>
                     {sectionItems.map((itemLabel) => (
                       <tr key={itemLabel}>
-                        <td className="w-25">{itemLabel}</td>
+                        <td>{itemLabel}</td>
+                        <td className="text-end">{figures[mode][itemLabel].toLocaleString()}</td>
                         <td>
                           <DroppableSlot
                             id={itemLabel}
                             current={placements[itemLabel]}
-                            showCorrect={submitted}
                           />
                         </td>
                       </tr>
@@ -215,12 +254,6 @@ export default function App() {
         </div>
 
         <div className="text-center">
-          <button
-            onClick={() => setSubmitted(true)}
-            className="btn btn-success me-2"
-          >
-            Check Answers
-          </button>
           <button
             onClick={handleReset}
             className="btn btn-secondary"
